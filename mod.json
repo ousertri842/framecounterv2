@@ -1,0 +1,336 @@
+{
+  "geode": "5.10.1",
+  "gd": {
+    "win": "2.2081",
+    "mac": "2.2081",
+    "android": "2.2081"
+  },
+  "id": "razor.frame-window-lab",
+  "name": "Frame Window Lab",
+  "version": "v1.1.0",
+  "developer": "Razor",
+  "description": "Record a run, measure every click's frame window, and play it back with circles, counters and sounds.",
+  "tags": [
+    "gameplay",
+    "utility",
+    "offline"
+  ],
+  "resources": {
+    "files": [
+      "resources/*.wav"
+    ],
+    "sprites": [
+      "resources/fwl-button.png"
+    ]
+  },
+  "settings": {
+    "display-title": {
+      "type": "title",
+      "name": "Playback display"
+    },
+    "circles": {
+      "type": "bool",
+      "name": "Click circles",
+      "default": true,
+      "description": "Draw a ring where each click happened, with its frame window above it."
+    },
+    "counters": {
+      "type": "bool",
+      "name": "Frame counters",
+      "default": true,
+      "description": "Show the counter rows in the top left during playback, counting up as the clicks are played."
+    },
+    "sounds": {
+      "type": "bool",
+      "name": "Click sounds",
+      "default": true,
+      "description": "Play a cue for each click that gets a circle. Tighter windows sound lower; 1-frame clicks have their own bell."
+    },
+    "show-releases": {
+      "type": "bool",
+      "name": "Show releases",
+      "default": true,
+      "description": "Releases are measured too. Turn this off to show and count presses only."
+    },
+    "count-ship": {
+      "type": "bool",
+      "name": "Count ship clicks",
+      "default": false,
+      "description": "Off: ship clicks get no circle or sound and are left out of the counter, as in most frame window videos. They are still measured."
+    },
+    "max-circle-frames": {
+      "type": "int",
+      "name": "Max circle frames",
+      "default": 15,
+      "min": 1,
+      "max": 250,
+      "description": "Clicks wider than this get no circle and no sound. The counter still counts them."
+    },
+    "count-fps": {
+      "type": "int",
+      "name": "Count frames at",
+      "default": 240,
+      "min": 60,
+      "max": 240,
+      "description": "Converts the measured duration using ticks x FPS / 240. Supports every value from 60 to 240, including 144 and 180. This changes display counts, not the 240 Hz physics.",
+      "control": {
+        "arrows": true,
+        "arrow-step": 60,
+        "big-arrows": false,
+        "slider": false,
+        "input": true
+      }
+    },
+    "round-windows-up": {
+      "type": "bool",
+      "name": "Round fractional frames up",
+      "default": true,
+      "description": "On: 5 ticks at 60 FPS displays as 2 frames (1.25 rounded up). Off: round down, with a minimum of 1, as in v1.0.0. This is a duration conversion, not a scan on a lower-FPS input grid."
+    },
+    "count-open-windows": {
+      "type": "bool",
+      "name": "Count unfinished window bounds",
+      "default": false,
+      "description": "Include N+ windows in counter rows. Off by default: N+ is only a lower bound, so its exact counter row is unknown. Rings still show N+; increase Scan range and rescan to find the edge."
+    },
+    "number-beside-ring": {
+      "type": "bool",
+      "name": "Number beside the ring",
+      "default": false,
+      "description": "Puts each number beside its ring (left for a press, right for a release) instead of above it."
+    },
+    "show-milliseconds": {
+      "type": "bool",
+      "name": "Milliseconds",
+      "default": false,
+      "description": "Show each click's window in milliseconds under its ring. One tick at 240 is 4.2 ms."
+    },
+    "circle-scale": {
+      "type": "float",
+      "name": "Circle size",
+      "default": 1.0,
+      "min": 0.5,
+      "max": 2.0,
+      "description": "Size of the click rings.",
+      "control": {
+        "slider": true,
+        "slider-step": 0.05,
+        "input": true
+      }
+    },
+    "number-scale": {
+      "type": "float",
+      "name": "Number size",
+      "default": 1.0,
+      "min": 0.5,
+      "max": 3.0,
+      "description": "Size of the frame number at each ring.",
+      "control": {
+        "slider": true,
+        "slider-step": 0.05,
+        "input": true
+      }
+    },
+    "counter-scale": {
+      "type": "float",
+      "name": "Counter size",
+      "default": 1.0,
+      "min": 0.5,
+      "max": 2.0,
+      "description": "Size of the counter panel.",
+      "control": {
+        "slider": true,
+        "slider-step": 0.05,
+        "input": true
+      }
+    },
+    "counter-title": {
+      "type": "title",
+      "name": "Counter rows"
+    },
+    "counter-rows": {
+      "type": "string",
+      "name": "Rows",
+      "default": "1,2,3,4,5+",
+      "description": "Comma-separated frame counts or ranges, such as 1,2,3,7-8,9+."
+    },
+    "counter-colors": {
+      "type": "string",
+      "name": "Colours",
+      "default": "",
+      "description": "Optional: first frame of a row and a hex colour, such as 1:ff5468,5:60c8ff. Empty uses the built-in palette."
+    },
+    "scan-title": {
+      "type": "title",
+      "name": "Scan"
+    },
+    "scan-range": {
+      "type": "int",
+      "name": "Scan range (ticks)",
+      "default": 12,
+      "min": 1,
+      "max": 60,
+      "description": "How far each click is moved to either side while measuring. Windows wider than the range read as N+."
+    },
+    "check-ticks": {
+      "type": "int",
+      "name": "Check length (ticks)",
+      "default": 120,
+      "min": 10,
+      "max": 2400,
+      "description": "After a moved click, the run must survive this many ticks past the following inputs to pass. Longer is stricter and slower."
+    },
+    "following-inputs": {
+      "type": "int",
+      "name": "Following inputs",
+      "default": 2,
+      "min": 0,
+      "max": 16,
+      "description": "How many of the next inputs must also play out before the check length starts."
+    },
+    "skip-useless": {
+      "type": "bool",
+      "name": "Leave out useless clicks",
+      "default": true,
+      "description": "Remove each press and its release and replay to completion. Only if the level still finishes are both events left out of the counter. This always checks the whole run."
+    },
+    "exact-scan": {
+      "type": "bool",
+      "name": "Exact scan",
+      "default": true,
+      "description": "Recommended: replay from the start for every test to avoid incomplete checkpoint restoration. Off uses faster, approximate checkpoints; failed baseline checks retry from the start. Existing installations should enable this manually."
+    },
+    "check-to-end": {
+      "type": "bool",
+      "name": "Require level completion",
+      "default": true,
+      "description": "Recommended: a moved click passes only if the level actually finishes. Catches delayed deaths that short checks miss. Off uses Following inputs and Check length instead, which is faster but approximate."
+    },
+    "resume-scan": {
+      "type": "bool",
+      "name": "Resume matching partial scans",
+      "default": true,
+      "description": "Continue a cancelled scan only if its scan settings match. Off starts fresh. Completed scans always start fresh; recordings from v1.0.0 keep their inputs but must be rescanned."
+    },
+    "scan-budget-ms": {
+      "type": "int",
+      "name": "Scan time per frame (ms)",
+      "default": 12,
+      "min": 4,
+      "max": 100,
+      "description": "How long the scan works each frame. Higher is faster but the game gets choppier while scanning."
+    },
+    "sounds-title": {
+      "type": "title",
+      "name": "Custom sounds"
+    },
+    "sound-1": {
+      "type": "file",
+      "name": "1-frame sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Leave empty for the bundled cue."
+    },
+    "sound-2": {
+      "type": "file",
+      "name": "2-frame sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Leave empty for the bundled cue."
+    },
+    "sound-3": {
+      "type": "file",
+      "name": "3-frame sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Leave empty for the bundled cue."
+    },
+    "sound-4": {
+      "type": "file",
+      "name": "4-frame sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Leave empty for the bundled cue."
+    },
+    "sound-5": {
+      "type": "file",
+      "name": "5-frame sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Leave empty for the bundled cue."
+    },
+    "sound-wide": {
+      "type": "file",
+      "name": "Wide sound",
+      "default": "",
+      "control": {
+        "filters": [
+          {
+            "description": "Audio",
+            "files": [
+              "*.wav",
+              "*.ogg",
+              "*.mp3"
+            ]
+          }
+        ]
+      },
+      "description": "Played for windows wider than 9 frames. Leave empty for the bundled cue."
+    }
+  }
+}
