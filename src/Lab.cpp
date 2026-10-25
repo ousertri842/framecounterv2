@@ -64,8 +64,8 @@ void PlayerExtras::save(PlayerObject* p) {
     padRingRelated = p->m_padRingRelated;
     holdingLeft = p->m_holdingLeft;
     holdingRight = p->m_holdingRight;
-    holdingButtons = p->m_holdingButtons;
-    jumpPadRelated = p->m_jumpPadRelated;
+    copyMap(holdingButtons, p->m_holdingButtons);
+    copyMap(jumpPadRelated, p->m_jumpPadRelated);
     touchedRings = p->m_touchedRings;
     ringRelatedSet = p->m_ringRelatedSet;
 }
@@ -82,8 +82,8 @@ void PlayerExtras::restore(PlayerObject* p) const {
     p->m_padRingRelated = padRingRelated;
     p->m_holdingLeft = holdingLeft;
     p->m_holdingRight = holdingRight;
-    p->m_holdingButtons = holdingButtons;
-    p->m_jumpPadRelated = jumpPadRelated;
+    copyMap(p->m_holdingButtons, holdingButtons);
+    copyMap(p->m_jumpPadRelated, jumpPadRelated);
     p->m_touchedRings = touchedRings;
     p->m_ringRelatedSet = ringRelatedSet;
 }
