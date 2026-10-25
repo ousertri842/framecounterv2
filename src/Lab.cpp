@@ -39,7 +39,13 @@ namespace {
     void notify(std::string const& text, NotificationIcon icon = NotificationIcon::Info) {
         Notification::create(text, icon, 3.f)->show();
     }
-
+template <class Map>
+static void copyMap(Map& destination, Map const& source) {
+    destination.clear();
+    for (auto const& entry : source) {
+        destination.insert(entry);
+    }
+}
     void closePauseMenu() {
         if (auto scene = CCScene::get()) {
             if (auto pause = scene->getChildByType<PauseLayer>(0)) {
