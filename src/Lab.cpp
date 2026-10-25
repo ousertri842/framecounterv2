@@ -56,7 +56,34 @@ static void copyMap(Map& destination, Map const& source) {
 }
 
 // ---- player extras ----------------------------------------------------
+PlayerExtras& PlayerExtras::operator=(PlayerExtras const& other) {
+    if (this == &other) return *this;
 
+    valid = other.valid;
+    jumpBuffered = other.jumpBuffered;
+    stateJumpBuffered = other.stateJumpBuffered;
+    stateRingJump = other.stateRingJump;
+    stateRingJump2 = other.stateRingJump2;
+    touchedRing = other.touchedRing;
+    touchedPad = other.touchedPad;
+    ringJumpRelated = other.ringJumpRelated;
+    padRingRelated = other.padRingRelated;
+    holdingLeft = other.holdingLeft;
+    holdingRight = other.holdingRight;
+
+    copyMap(holdingButtons, other.holdingButtons);
+    copyMap(jumpPadRelated, other.jumpPadRelated);
+
+    touchedRings.clear();
+    for (auto const& item : other.touchedRings)
+        touchedRings.insert(item);
+
+    ringRelatedSet.clear();
+    for (auto const& item : other.ringRelatedSet)
+        ringRelatedSet.insert(item);
+
+    return *this;
+}
 void PlayerExtras::save(PlayerObject* p) {
     valid = p != nullptr;
     if (!p) return;
