@@ -21,6 +21,7 @@ struct PlayerExtras {
     // Not an aggregate: some platforms' containers have explicit default
     // constructors, which aggregate initialisation can't call.
     PlayerExtras() {}
+PlayerExtras& operator=(PlayerExtras const& other);
 
     bool valid = false;
     bool jumpBuffered = false;
