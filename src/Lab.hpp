@@ -33,8 +33,8 @@ struct PlayerExtras {
     bool padRingRelated = false;
     bool holdingLeft = false;
     bool holdingRight = false;
-    gd::map<int, bool> holdingButtons;
-    gd::map<int, bool> jumpPadRelated;
+    std::map<int, bool> holdingButtons;
+    std::map<int, bool> jumpPadRelated;
     gd::unordered_set<int> touchedRings;
     gd::unordered_set<int> ringRelatedSet;
 
